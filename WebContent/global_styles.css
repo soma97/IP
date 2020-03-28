@@ -1,0 +1,21 @@
+.dark-theme{
+    background-color: #777777;
+    color: white;
+}
+
+.rounded-image{
+  border-radius: 50%;
+}
+
+.profile-img{
+	width:200px;
+	height:200px;
+}
+
+a {
+	color: #bbbbbb;
+}
+
+.emergency{
+  color: #992222;
+}

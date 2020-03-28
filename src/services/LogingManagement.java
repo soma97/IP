@@ -1,0 +1,58 @@
+package services;
+
+import java.util.HashMap;
+import java.util.Date;
+import javax.servlet.http.HttpSession;
+
+import db.dao.UserAccountDAO;
+import db.models.Login;
+import db.models.UserAccount;
+
+public class LogingManagement {
+	private static LogingManagement instance = new LogingManagement();
+
+	public HashMap<String,Login> usersKeys = new HashMap<String, Login>();
+	
+	public static LogingManagement getInstance()
+	{
+		if(instance == null)
+		{
+			instance = new LogingManagement();
+		}
+		return instance;
+	}
+	
+	private LogingManagement()
+	{
+		
+	}
+	
+	public void loginUser(UserAccount userAccount, HttpSession session)
+	{
+		session.setAttribute("id", userAccount.getId());
+		Login login = new Login(0, new Date(System.currentTimeMillis()), null, userAccount.getId());
+		userAccount.setNumberOfLogins(userAccount.getNumberOfLogins()+1);
+		UserAccountDAO.insertLogin(login);
+		UserAccountDAO.updateUser(userAccount);
+		usersKeys.put(session.getId(), login);
+	}
+	
+	public void logoutUser(UserAccount userAccount, HttpSession session)
+	{
+		Login login = usersKeys.get(session.getId());
+		login.setDateLogout(new Date(System.currentTimeMillis()));
+		UserAccountDAO.updateLogoutTime(login);
+		usersKeys.remove(session.getId());
+		session.invalidate();
+	}
+	
+	public boolean checkIfLoggedIn(String sessionId)
+	{
+		Login login = usersKeys.get(sessionId);
+		if(login == null)
+		{
+			return false;
+		}
+		return true;
+	}
+}
