@@ -1,7 +1,2 @@
 eclipse.preferences.version=1
-encoding//WebContent/editProfile.jsp=UTF-8
-encoding//WebContent/error.jsp=UTF-8
-encoding//WebContent/homePage.jsp=UTF-8
-encoding//WebContent/login.jsp=UTF-8
-encoding//WebContent/register.jsp=UTF-8
 encoding//src/controllers/LoginServlet.java=UTF-8

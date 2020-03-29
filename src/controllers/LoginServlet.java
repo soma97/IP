@@ -34,8 +34,7 @@ public class LoginServlet extends HttpServlet {
 			if(userAccount.getPassword().equals(password))
 			{
 				LogingManagement.getInstance().loginUser(userAccount, request.getSession());
-				RequestDispatcher dispatcher = request.getRequestDispatcher("homePage.jsp");
-				dispatcher.forward(request, response);
+				response.sendRedirect("homePage.jsp");
 				return;
 			}
 			else {

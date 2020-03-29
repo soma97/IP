@@ -56,8 +56,8 @@ public class RegisterServlet extends HttpServlet {
 				username, request.getParameter("password"), email, 
 				null, null, null, null, "no", 0, false, false, false, true);
 		UserAccountDAO.insertUser(userAccount);
-		request.setAttribute("user", userAccount);
 		LogingManagement.getInstance().loginUser(userAccount, request.getSession());
+		request.setAttribute("user", userAccount);
 		RequestDispatcher dispatcher = request.getRequestDispatcher("editProfile.jsp");
 		dispatcher.forward(request, response);
 	}
