@@ -1,6 +1,10 @@
+<%@page import="services.*"%>
+<%@page import="com.rometools.rome.feed.synd.SyndEntry"%>
 <%@page import="db.models.*"%>
 <%@page import="db.dao.*"%>
 <%@page import="java.util.ArrayList"%>
+<%@page import="java.util.List"%>
+<%@page import="com.rometools.rome.feed.synd.SyndEntry"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -21,6 +25,11 @@
   }(document, 'script', 'facebook-jssdk'));</script>
 <title>Početna</title>
 </head>
+<%
+	UserAccount userAccount = UserAccountDAO.selectUserById((int)session.getAttribute("id"));
+	ArrayList<Post> dangerPosts = PostDAO.selectAllPotentialDangerPosts();
+	List<SyndEntry> rssFeed = RSSService.getRSSFeed();
+%>
 <script>
 	function ajaxComment(id)
 	{
@@ -85,6 +94,23 @@
 	            			}
 	            	}
 	            	
+	            	var newRSS = $("div[id^=rss-number]",html);
+	            	var oldRSS = $("div[id^=rss-number]");
+	            	if(newRSS.length > oldRSS.length)
+	            	{
+		            	for(var i=0; i<newRSS.length; ++i)
+		            	{
+		            			var newElementRSS = newRSS[i];
+		            			var searchForRSS = "#"+ $(newElementRSS).attr("id");
+		            			if($(searchForRSS).html() == null)
+		            			{
+		            				var htmlToAddRSS = "<div id='" + $(newElementRSS).attr("id") + "'>" + $(newElementRSS).html() + "</div>";
+		            				var oldRSSHtml = $('#rss').html();
+		            				$('#rss').html(htmlToAddRSS+oldRSSHtml);
+		            			}
+		            	}
+	            	}
+	            	
 	            },
 	            error: function(error)
 	            {
@@ -146,6 +172,8 @@
 			}
 		});
 		
+		fillWeather();
+		
 	}
 	
 	function fillMap(xArg,yArg, mapId)
@@ -177,13 +205,97 @@
 			$(current).html('Detalji');
 		}
 	}
+	
+	function fillWeather()
+	{
+		var regionUrl = "<%=Constants.BASE_URL_REGION + userAccount.getCountry() %>"+"/all/?key=<%=Constants.ACTIVE_REGION_KEY %>";
+	
+		function JsonpHttpRequest(url, callback) {
+		        var e = document.createElement('script');
+		        e.src = url;
+		        document.body.appendChild(e); 
+		        window[callback] = (data) => {
+					var json = data;
+					var called=false;
+					for(var i = 0; i < json.length; i++) {
+					    var obj = json[i];
+						
+						var cityUrl = "<%=Constants.BASE_URL_CITY + userAccount.getCountry() %>" + "/search/?region="+ obj.region +"&key=<%=Constants.ACTIVE_REGION_KEY%>";
+
+						var numberOfCities = 0;
+						var currentCity = 0;
+						function JsonpHttpRequest(url, callback) {
+						        var e = document.createElement('script');
+						        e.src = url;
+						        document.body.appendChild(e); 
+						        window[callback] = (data) => {
+						        	var json = data;
+								
+									function getCityData()
+									{
+										if(numberOfCities > 9)
+										{
+											return;
+										}
+										if(numberOfCities < 2)
+										{
+											setInterval(getCityData, 1000);
+										}
+										var obj = json[currentCity];
+										if(obj == null)
+										{
+											return;
+										}
+										var weatherUrl = "http://api.openweathermap.org/data/2.5/forecast?q="+ obj.city +"&appid=<%=Constants.ACTIVE_WEATHER_KEY%>";
+										$.ajax({
+									            type: 'GET',
+									            url: weatherUrl,
+									            success: function(result) {
+													var idToSet = 1;
+													if(result.list[0]!=null)
+													{
+														numberOfCities = numberOfCities + 1;
+														idToSet = numberOfCities;
+														var rand = 0.0;
+														if(idToSet > 3)
+														{
+															idToSet = (idToSet % 3) + 1;
+															rand = Math.random();
+														}
+														console.log("city: "+ obj.city +" "+ numberOfCities);
+														if(rand < 0.4)
+														{
+															$("#city-name-"+idToSet).html(obj.city);
+															var temperature = result.list[0].main.temp - 272.15;
+															$("#temp-"+idToSet).html(temperature.toPrecision(3)+" °C");
+															$("#w-stat-"+idToSet).html(result.list[0].weather[0].main);
+															$("#w-img-"+idToSet).attr("src","http://openweathermap.org/img/wn/"+result.list[0].weather[0].icon+"@2x.png");
+														}
+													}
+									            },
+									            error: function(error)
+									            {
+									            }
+										});
+										currentCity = currentCity + 1;
+									}
+									if(called == false)
+									{
+										getCityData();
+										called = true;
+									}
+						        }
+						};
+						JsonpHttpRequest(cityUrl + '&callback=cb', "cb");
+					}
+		        }
+		};
+		JsonpHttpRequest(regionUrl + '&callback=cb', "cb");
+			
+	}
 
 </script>
 <body class="dark-theme" onload="prepare()">
-<%
-	UserAccount userAccount = UserAccountDAO.selectUserById((int)session.getAttribute("id"));
-	ArrayList<Post> dangerPosts = PostDAO.selectAllPotentialDangerPosts();
-%>
 <div class="row">
 	<div class="col-md-3">
 		<div class="col-md-12 text-center">
@@ -455,24 +567,57 @@
 	
 	<div hidden="true" id="rss">
 	<%
-		for(int i=0;i<0;++i)
+		for(int i=0;i<rssFeed.size();++i)
 		{
 	%>
-		<div class="col-md-12">
-		<br/>
-		</div>
-		
-		<div class="post-border">
+		<div id="rss-number-<%=rssFeed.size()-i-1%>">
+			<div class="col-md-12">
+			<br/>
+			</div>
+			<div class="post-border col-md-12">
+				<h4><b><%= rssFeed.get(i).getTitle()%></b></h4>
+				<a href="<%=rssFeed.get(i).getLink() %>"><%=rssFeed.get(i).getLink() %></a>
+				<hr/>
+				<p><%=rssFeed.get(i).getDescription().getValue() %></p>
+			</div>
 		</div>
 	<% } %>
 	</div>
 	
 	<!-- KRAJ RSS-A -->
+	</div>
 	
-	</div>
 	<div class="col-md-3">
-		NESTO
+		<div class="col-md-12">
+			<br/>
+			<br/>
+		</div>
+		<div id="city-1" class="post-border col-md-12">
+			<h4 id="city-name-1"></h4>
+			<h6 id="temp-1"></h6>
+			<h6 id="w-stat-1"></h6>
+			<img alt="status" id="w-img-1" src="">
+		</div>
+		<div class="col-md-12">
+			<br/>
+		</div>
+		<div id="city-2" class="post-border col-md-12">
+			<h4 id="city-name-2"></h4>
+			<h6 id="temp-2"></h6>
+			<h6 id="w-stat-2"></h6>
+			<img alt="status" id="w-img-2" src="">
+		</div>
+		<div class="col-md-12">
+			<br/>
+		</div>
+		<div id="city-3" class="post-border col-md-12">
+			<h4 id="city-name-3"></h4>
+			<h6 id="temp-3"></h6>
+			<h6 id="w-stat-3"></h6>
+			<img alt="status" id="w-img-3" src="">
+		</div>
 	</div>
+	
 </div>
 </body>
 </html>

@@ -6,6 +6,8 @@ public class Constants {
 		public static final String BASE_URL_FLAG = "https://restcountries.eu/rest/v2/name/";
 		public static final String BASE_URL_REGION = "http://battuta.medunes.net/api/region/";
 		public static final String BASE_URL_CITY = "http://battuta.medunes.net/api/city/";
+		
+		public static final String RSS_FEED = "https://europa.eu/newsroom/calendar.xml_en?field_nr_events_by_topic_tid=151";
 	
 	
 		//MEDUNAS
