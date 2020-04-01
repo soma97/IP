@@ -39,6 +39,11 @@ a {
 	border-radius: 10%;
 }
 
+.logo{
+	width: 75px;
+	height: 75px;
+}
+
 .comment-logo{
 	height: 50px;
 	width: 50px;

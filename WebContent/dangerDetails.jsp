@@ -1,7 +1,6 @@
 <%@page import="db.models.*"%>
 <%@page import="db.dao.*"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="java.lang.Exception"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -20,8 +19,6 @@
     js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v3.0";
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));</script>
-<title>Objava</title>
-</head>
 <%
 	int id = -1;
 	try{
@@ -38,6 +35,7 @@
 	
 %>
 <script>
+
 	function ajaxComment()
 	{
 	$('#comment-form').submit(function( event ) {
@@ -74,24 +72,47 @@
 	}
 	
 	function prepare()
-	{	
+	{
+		<%
+		if(post.getLocation()!=null)
+		{
+		%>
+	    var x = <%=post.getLocation().split(",")[0]%>;
+		var y = <%=post.getLocation().split(",")[1]%>;
+		var mymap = L.map('map-id').setView([x, y], 7);
+		L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+			maxZoom: 18,
+			id: 'mapbox/streets-v11',
+			tileSize: 512,
+			zoomOffset: -1
+		}).addTo(mymap);
+
+		var marker = L.marker([x, y]).addTo(mymap);
+		<%}%>
 		ajaxComment();
 	}
-	
 </script>
+<title>Potencijalna opasnost</title>
+</head>
 <body class="dark-theme" onload="prepare()">
 <div class="container body-content">
 <h2><%=post.getTitle()%></h2>
+<%
+	if(post.isEmergencyWarning())
+	{
+%>
+		<h4 class="emergency">Hitno upozorenje</h4>
+<% 	} %>
 <%
 	if(user.getId() != (int)session.getAttribute("id"))
 	{
 %>
 <div id="fb-root"></div>
 <div class="fb-share-button" 
-    data-href="http://localhost:8080/EmergencyWebApp/post.jsp?id=<%=post.getId()%>" 
+    data-href="http://localhost:8080/EmergencyWebApp/dangerDetails.jsp?id=<%=post.getId()%>" 
     data-layout="button_count">
  </div>
-<a class="btn btn-primary btn-sm" href="https://twitter.com/intent/tweet?text=http://localhost:8080/EmergencyWebApp/post.jsp?id=<%=post.getId()%>" target="_blank">
+<a class="btn btn-primary btn-sm" href="https://twitter.com/intent/tweet?text=http://localhost:8080/EmergencyWebApp/dangerDetails.jsp?id=<%=post.getId()%>" target="_blank">
   Tweet
 </a>
 <% } %>
@@ -104,49 +125,15 @@
 		<div class="col-md-9">
 			<p><b><%= post.getText() %></b></p>
 			<%
-				if(post.getLink()!=null)
+				if(post.getLocation()!=null)
 				{
 			%>
 	         	<hr/>
-	        	<a href="<%= post.getLink() %>"><%= post.getLink() %></a>
+	         	<p><b>Lokacija</b></p>
+	        	<div id="map-id" class="map"></div>
+	        	<p><%=post.getLocation() %></p>
 	        <% } %>
-	   		<%
-				if(post.getVideoSource()!=null)
-				{
-			%>
-					<hr/>
-					<p><b>Video</b></p>
-			<%
-					if(post.getVideoSource().contains("youtube.com"))
-					{
-			%>
-						<iframe width="500" height="315" allowfullscreen
-							src="<%=post.getVideoSource().replace("watch?v=","embed/")%>">
-						</iframe>
-				<%  }
-					else{
-				%>
-						<video width="500" height="315" controls>
-						 	<source src="<%=post.getVideoSource() %>"/>
-						</video>
-	        <%		} 
-				} 
-			%>
-	        
-	        <%
-	        	ArrayList<ImagePath> images = ImageDAO.selectAllForPostId(post.getId());
-	        	if(images.size()>0)
-	        	{
-	        		%>
-	        			<hr/>
-	        			<p><b>Fotografije</b></p>
-	        		<%
-	        	}
-	        	for(ImagePath image : images)
-	        	{
-	        %>
-	        		<img class="post-image col-md-4" src="<%= image.getImageSource() %>" alt="slika posta"/>
-	        <%  } %>
+		
 	        <div class="col-md-12">
 	        	<hr/>
 	        	<p><b>Komentari</b></p>
@@ -198,5 +185,6 @@
 <br/>
 <br/>
 <br/>
+
 </body>
 </html>

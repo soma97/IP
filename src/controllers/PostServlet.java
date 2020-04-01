@@ -83,15 +83,8 @@ public class PostServlet extends HttpServlet {
 			link = null;
 		}
 		
-		String location = request.getParameter("location");
-		if(!location.contains(","))
-		{
-			location = null;
-		}
-		
 		Post post = new Post(0, request.getParameter("title"), request.getParameter("text"), link, 
-				videoPath, request.getParameter("emergency") != null, location, 
-				false, userAccount.getId());
+				videoPath,null,false, false, false, userAccount.getId());
 		
 		PostDAO.insertPost(post);
 	

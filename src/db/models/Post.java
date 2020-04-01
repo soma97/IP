@@ -7,20 +7,23 @@ public class Post {
 	private String text;
 	private String link;
 	private String videoSource;
-	private boolean isEmergencyWarning;
 	private String location;
+	private boolean isEmergencyWarning;
+	private boolean isPotentialDanger;
 	private boolean isDeleted;
 	private int userAccountId;
 	
-	public Post(int id, String title, String text, String link, String videoSource, boolean isEmergencyWarning,
-			String location, boolean isDeleted, int userAccountId) {
+	public Post(int id, String title, String text, String link, String videoSource, String location,
+			boolean isEmergencyWarning, boolean isPotentialDanger, boolean isDeleted, int userAccountId) {
+		super();
 		this.id = id;
 		this.title = title;
 		this.text = text;
 		this.link = link;
 		this.videoSource = videoSource;
-		this.isEmergencyWarning = isEmergencyWarning;
 		this.location = location;
+		this.isEmergencyWarning = isEmergencyWarning;
+		this.isPotentialDanger = isPotentialDanger;
 		this.isDeleted = isDeleted;
 		this.userAccountId = userAccountId;
 	}
@@ -56,14 +59,6 @@ public class Post {
 	public void setLink(String link) {
 		this.link = link;
 	}
-	
-	public int getUserAccountId() {
-		return userAccountId;
-	}
-
-	public void setUserAccountId(int userAccountId) {
-		this.userAccountId = userAccountId;
-	}
 
 	public String getVideoSource() {
 		return videoSource;
@@ -71,14 +66,6 @@ public class Post {
 
 	public void setVideoSource(String videoSource) {
 		this.videoSource = videoSource;
-	}
-
-	public boolean isEmergencyWarning() {
-		return isEmergencyWarning;
-	}
-
-	public void setEmergencyWarning(boolean isEmergencyWarning) {
-		this.isEmergencyWarning = isEmergencyWarning;
 	}
 
 	public String getLocation() {
@@ -89,11 +76,35 @@ public class Post {
 		this.location = location;
 	}
 
+	public boolean isEmergencyWarning() {
+		return isEmergencyWarning;
+	}
+
+	public void setEmergencyWarning(boolean isEmergencyWarning) {
+		this.isEmergencyWarning = isEmergencyWarning;
+	}
+
+	public boolean isPotentialDanger() {
+		return isPotentialDanger;
+	}
+
+	public void setPotentialDanger(boolean isPotentialDanger) {
+		this.isPotentialDanger = isPotentialDanger;
+	}
+
 	public boolean isDeleted() {
 		return isDeleted;
 	}
 
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+
+	public int getUserAccountId() {
+		return userAccountId;
+	}
+
+	public void setUserAccountId(int userAccountId) {
+		this.userAccountId = userAccountId;
 	}
 }

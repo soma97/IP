@@ -26,7 +26,6 @@
 					    return obj;
 					}, {}),
 				  success: function(response) {
-					console.log(response);
 				    var json = JSON.parse(response);
 				    var result = true;
 				    var pass1=$('#pass1').val();

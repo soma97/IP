@@ -7,19 +7,20 @@ public class EmergencyCall {
 	private String title;
 	private String description;
 	private Date date;
-	private String imageSource;
 	private String location;
+	private String imageSource;
 	private boolean isDeleted;
 	private int emergencyCategoryId;
 	
-	public EmergencyCall(int id, String title, String description, Date date, String imageSource, String location,
+	public EmergencyCall(int id, String title, String description, Date date, String location, String imageSource,
 			boolean isDeleted, int emergencyCategoryId) {
+		super();
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.date = date;
-		this.imageSource = imageSource;
 		this.location = location;
+		this.imageSource = imageSource;
 		this.isDeleted = isDeleted;
 		this.emergencyCategoryId = emergencyCategoryId;
 	}
@@ -56,20 +57,20 @@ public class EmergencyCall {
 		this.date = date;
 	}
 
-	public String getImageSource() {
-		return imageSource;
-	}
-
-	public void setImageSource(String imageSource) {
-		this.imageSource = imageSource;
-	}
-
 	public String getLocation() {
 		return location;
 	}
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public String getImageSource() {
+		return imageSource;
+	}
+
+	public void setImageSource(String imageSource) {
+		this.imageSource = imageSource;
 	}
 
 	public boolean isDeleted() {
@@ -87,4 +88,5 @@ public class EmergencyCall {
 	public void setEmergencyCategoryId(int emergencyCategoryId) {
 		this.emergencyCategoryId = emergencyCategoryId;
 	}
+	
 }
