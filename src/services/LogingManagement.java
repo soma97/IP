@@ -11,7 +11,7 @@ import db.models.UserAccount;
 public class LogingManagement {
 	private static LogingManagement instance = new LogingManagement();
 
-	public HashMap<String,Login> usersKeys = new HashMap<String, Login>();
+	public HashMap<String,Login> usersSessions = new HashMap<String, Login>();
 	
 	public static LogingManagement getInstance()
 	{
@@ -32,23 +32,27 @@ public class LogingManagement {
 		session.setAttribute("id", userAccount.getId());
 		Login login = new Login(0, new Date(System.currentTimeMillis()), null, userAccount.getId());
 		userAccount.setNumberOfLogins(userAccount.getNumberOfLogins()+1);
+		userAccount.setLoggedIn(true);
 		UserAccountDAO.insertLogin(login);
 		UserAccountDAO.updateUser(userAccount);
-		usersKeys.put(session.getId(), login);
+		usersSessions.put(session.getId(), login);
 	}
 	
-	public void logoutUser(UserAccount userAccount, HttpSession session)
+	public void logoutUser(HttpSession session)
 	{
-		Login login = usersKeys.get(session.getId());
+		UserAccount userAccount = UserAccountDAO.selectUserById((int)session.getAttribute("id"));
+		Login login = usersSessions.get(session.getId());
 		login.setDateLogout(new Date(System.currentTimeMillis()));
+		userAccount.setLoggedIn(false);
 		UserAccountDAO.updateLogoutTime(login);
-		usersKeys.remove(session.getId());
+		UserAccountDAO.updateUser(userAccount);
+		usersSessions.remove(session.getId());
 		session.invalidate();
 	}
 	
 	public boolean checkIfLoggedIn(String sessionId)
 	{
-		Login login = usersKeys.get(sessionId);
+		Login login = usersSessions.get(sessionId);
 		if(login == null)
 		{
 			return false;

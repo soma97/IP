@@ -19,6 +19,7 @@ import javax.servlet.http.Part;
 
 import db.dao.UserAccountDAO;
 import db.models.UserAccount;
+import services.Constants;
 import services.FilesService;
 
 /**
@@ -70,7 +71,10 @@ public class EditProfileServlet extends HttpServlet {
 		userAccount.setRegion(request.getParameter("region"));
 		userAccount.setCity(request.getParameter("city"));
 		userAccount.setReceiveEmergencyNotifications(request.getParameter("notifications"));
-		userAccount.setImageSource(imageSource);
+		if(userAccount.getImageSource()==null || !imageSource.contains(Constants.BASE_COUNTRY_FLAG_URL))
+		{
+			userAccount.setImageSource(imageSource);
+		}
 		UserAccountDAO.updateUser(userAccount);
 		RequestDispatcher dispatcher = request.getRequestDispatcher("homePage.jsp");
 		dispatcher.forward(request, response);

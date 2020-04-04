@@ -17,11 +17,14 @@ public class Constants {
 		public static final String KEY_MARKO = "26b6d902b15a242ccc4189dda70b97ee";
 		public static final String KEY_BORIS = "4293f79fc5812874fd17248b68ce3c9b";
 		
-		public static final String ACTIVE_REGION_KEY = KEY_MARKO;
+		public static final String ACTIVE_REGION_KEY = KEY_BORIS;
 	
 		//WEATHER
 		public static final String WEATHER_KEY = "59755b5efb012a3df994c893dc08bd7f";
 		
 		public static final String ACTIVE_WEATHER_KEY = WEATHER_KEY;
+		
+		//OTHER
+		public static final String BASE_COUNTRY_FLAG_URL="https://restcountries.eu/data";
 		
 }

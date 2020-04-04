@@ -12,7 +12,7 @@
 <div class="container body-content">
 <h2>Prijava</h2>
 <hr/>
-<form method="post" action="LoginServlet">
+<form method="post" action="AuthServlet">
 	<div class="form-horizontal col-md-6">
 		<div class="form-group">
 			<label class="control-label col-md-2">Korisničko ime</label>

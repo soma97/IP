@@ -3,6 +3,10 @@
     color: white;
 }
 
+.body-jsp{
+	padding-top: 70px;
+}
+
 .rounded-image{
   border-radius: 50%;
 }

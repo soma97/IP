@@ -1,21 +1,32 @@
 <%@page import="services.Constants"%>
+<%@page import="db.dao.*"%>
+<%@page import="db.models.*"%>
+<%@page import="services.Constants"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="UTF-8">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <link rel="stylesheet" href="global_styles.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <title>Izmjena profila</title>
 </head>
+<%
+	UserAccount user = UserAccountDAO.selectUserById((int)session.getAttribute("id"));
+%>
 <script>
 	function prepare()
 	{
+		<%
+		if(user.getCountry()==null)
+		{
+		%>
 			$.ajax({
 				  url: "<%=Constants.BASE_URL_COUNTRY%>",
 				  type: "get",
+				  async: false,
 				  success: function(response) {
 				    var json = response;
 				    var result = "";
@@ -29,7 +40,7 @@
 					  alert("Error");
 				  }
 				});
-			
+		
 			$('#select-country').change(function() {
 				var optionSelected = $("option:selected", this);
 			    var valueSelected = this.value;
@@ -92,88 +103,124 @@
 			    JsonpHttpRequest(cityUrl + '&callback=cb', "cb");
 			    
 			});
-		
+		<%}%>
 	}
 </script>
 <body class="dark-theme" onload="prepare()">
-<div class="container body-content">
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="homePage.jsp">Početna</a></li>
+                <li><a href="editProfile.jsp">Izmjena profila</a></li>
+                <li><a href="AuthServlet">Odjava</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container body-content body-jsp">
 <h2>Izmjena profila</h2>
 <hr/>
 <form method="post" action="EditProfileServlet" enctype="multipart/form-data">
-	<input type="hidden" name="id" value="<%=((db.models.UserAccount)request.getAttribute("user")).getId()%>" />
+	<input type="hidden" name="id" value="<%=user.getId()%>" />
 	<input type="hidden" id="country-id" name="countryFlag" value="https://restcountries.eu/data/ala.svg"/> 
 	<div class="form-horizontal col-md-6"> 
 		<div class="form-group">
 			<label class="control-label col-md-4">Profilna slika</label>
 			<div class="col-md-8">
-				<img id="profile-image" class="rounded-image profile-img" src="<%=((db.models.UserAccount)request.getAttribute("user")).getImageSource()%>" alt="Profilna slika"/>
+				<img id="profile-image" class="rounded-image profile-img" src="<%=user.getImageSource()%>" alt="Profilna slika"/>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-md-4">Izaberi sliku</label>
 			<div class="col-md-8">
-				<input id="selected-image" class="form-control" accept="image/*" type="file" name="image" value="<%=((db.models.UserAccount)request.getAttribute("user")).getImageSource()%>"/>
+				<input id="selected-image" class="form-control" accept="image/*" type="file" name="image" value="<%=user.getImageSource()%>"/>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-md-4">Ime</label>
 			<div class="col-md-8">
-				<input class="form-control text-box single-line" type="text" name="name" value="<%=((db.models.UserAccount)request.getAttribute("user")).getName()%>" required/>
+				<input class="form-control text-box single-line" type="text" name="name" value="<%=user.getName()%>" required/>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-md-4">Prezime</label>
 			<div class="col-md-8">
-				<input class="form-control text-box single-line" type="text" name="surname" value="<%=((db.models.UserAccount)request.getAttribute("user")).getSurname()%>" required/>
+				<input class="form-control text-box single-line" type="text" name="surname" value="<%=user.getSurname()%>" required/>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-md-4">Korisnicko ime</label>
 			<div class="col-md-8">
-				<input class="form-control text-box single-line" type="text" name="username" value="<%=((db.models.UserAccount)request.getAttribute("user")).getUsername()%>" required/>
+				<input class="form-control text-box single-line" type="text" name="username" value="<%=user.getUsername()%>" required/>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-md-4">Email</label>
 			<div class="col-md-8">
-				<input class="form-control text-box single-line" type="email" name="email" value="<%=((db.models.UserAccount)request.getAttribute("user")).getEmail()%>" required/>
+				<input class="form-control text-box single-line" type="email" name="email" value="<%=user.getEmail()%>" required/>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-md-4">Država</label>
 			<div class="col-md-8">
+				<% if(user.getCountry()!=null)
+					{
+				%>
+					<input class="form-control text-box single-line" type="text" name="country" value="<%=user.getCountry()%>" readonly="readonly" required/>
+				<%}else{ %>
 				<select id="select-country" class="form-control" name="country">
 				</select>
+				<% } %>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-md-4">Regija</label>
 			<div class="col-md-8">
+				<% if(user.getRegion()!=null)
+					{
+				%>
+					<input class="form-control text-box single-line" type="text" name="region" value="<%=user.getRegion()%>" readonly="readonly" required/>
+				<%}else{ %>
 				<select id="select-region" class="form-control" name="region">
 				</select>
+				<%} %>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-md-4">Grad</label>
 			<div class="col-md-8">
+			<% if(user.getCity()!=null)
+					{
+				%>
+					<input class="form-control text-box single-line" type="text" name="city" value="<%=user.getCity()%>" readonly="readonly" required/>
+				<%}else{ %>
 				<select id="select-city" class="form-control" name="city">
 				</select>
+				<%} %>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-md-4">Notifikacije o hitnim upozorenjima</label>
 			<div class="col-md-8">
 				<select class="form-control" name="notifications">
-				  <option value="no" <%=((db.models.UserAccount)request.getAttribute("user")).getReceiveEmergencyNotifications().equals("no") ? "selected=\"selected\"" : ""%>>Bez notifikacija</option>
-				  <option value="email" <%=((db.models.UserAccount)request.getAttribute("user")).getReceiveEmergencyNotifications().equals("email") ? "selected=\"selected\"" : ""%>>Na Email</option>
-				  <option value="app" <%=((db.models.UserAccount)request.getAttribute("user")).getReceiveEmergencyNotifications().equals("app") ? "selected=\"selected\"" : ""%> >Kroz aplikaciju</option>
+				  <option value="no" <%=user.getReceiveEmergencyNotifications().equals("no") ? "selected=\"selected\"" : ""%>>Bez notifikacija</option>
+				  <option value="email" <%=user.getReceiveEmergencyNotifications().equals("email") ? "selected=\"selected\"" : ""%>>Na Email</option>
+				  <option value="app" <%=user.getReceiveEmergencyNotifications().equals("app") ? "selected=\"selected\"" : ""%> >Kroz aplikaciju</option>
 				</select>
 			</div>
 		</div>
 		<div class="form-group">
 			<label class="control-label col-md-4">Odobren</label>
 			<div class="col-md-8">
-				<input disabled="disabled" class="check-box" type="checkbox" name="approved" <%=((db.models.UserAccount)request.getAttribute("user")).isApproved() == true ? "checked":"" %> required/>
+				<input disabled="disabled" class="check-box" type="checkbox" name="approved" <%=user.isApproved() == true ? "checked":"" %> required/>
 			</div>
 		</div>
 		<div class="form-group">

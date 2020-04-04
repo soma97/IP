@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
+<meta charset="UTF-8">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <link rel="stylesheet" href="global_styles.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
@@ -68,7 +68,7 @@
 		{
 			$.ajax({
 	            type: 'GET',
-	            url: 'http://localhost:8080/EmergencyWebApp/homePage.jsp',
+	            url: 'homePage.jsp',
 	            success: function(htmlString) {
 	            	var html = $(htmlString);
 	            	var newPosts = $("div[id^=post-number]",html);
@@ -136,12 +136,12 @@
 			{
 				$('#rss').fadeOut(750);
 				$('#posts').fadeIn(1500);
-				$('#post-rss-toggle').html('Prikazi RSS');
+				$('#post-rss-toggle').html('Prikaži RSS');
 			}
 			else{
 				$('#posts').fadeOut(750);
 				$('#rss').fadeIn(1500);
-				$('#post-rss-toggle').html('Prikazi postove');
+				$('#post-rss-toggle').html('Prikaži postove');
 			}
 		});
 		
@@ -172,7 +172,7 @@
 			}
 		});
 		
-		fillWeather();
+		//fillWeather();
 		
 	}
 	
@@ -209,52 +209,60 @@
 	function fillWeather()
 	{
 		var regionUrl = "<%=Constants.BASE_URL_REGION + userAccount.getCountry() %>"+"/all/?key=<%=Constants.ACTIVE_REGION_KEY %>";
+		
 	
 		function JsonpHttpRequest(url, callback) {
 		        var e = document.createElement('script');
 		        e.src = url;
 		        document.body.appendChild(e); 
-		        window[callback] = (data) => {
+		        window[callback] = (data)=>{
 					var json = data;
-					var called=false;
-					for(var i = 0; i < json.length; i++) {
-					    var obj = json[i];
-						
+					var numberOfCities = 0;
+					var currentRegion = 0;
+					var lastCheckedRegion = -1;
+					function getCities()
+					{
+						if(numberOfCities > 9 || currentRegion >= json.length)
+						{
+							return;
+						}
+					    var obj = json[currentRegion];
+
+						if(lastCheckedRegion == currentRegion)
+						{
+							setTimeout(getCities, 1000);
+							return;
+						}
 						var cityUrl = "<%=Constants.BASE_URL_CITY + userAccount.getCountry() %>" + "/search/?region="+ obj.region +"&key=<%=Constants.ACTIVE_REGION_KEY%>";
 
-						var numberOfCities = 0;
-						var currentCity = 0;
 						function JsonpHttpRequest(url, callback) {
 						        var e = document.createElement('script');
 						        e.src = url;
 						        document.body.appendChild(e); 
 						        window[callback] = (data) => {
-						        	var json = data;
+						        	var jsonCities = data;
 								
-									function getCityData()
+									for(var j=0;j<jsonCities.length;++j)
 									{
 										if(numberOfCities > 9)
 										{
 											return;
 										}
-										if(numberOfCities < 2)
-										{
-											setInterval(getCityData, 1000);
-										}
-										var obj = json[currentCity];
+										var obj = jsonCities[j];
 										if(obj == null)
 										{
-											return;
+											continue;
 										}
 										var weatherUrl = "http://api.openweathermap.org/data/2.5/forecast?q="+ obj.city +"&appid=<%=Constants.ACTIVE_WEATHER_KEY%>";
 										$.ajax({
 									            type: 'GET',
 									            url: weatherUrl,
+												async: false,
 									            success: function(result) {
 													var idToSet = 1;
 													if(result.list[0]!=null)
 													{
-														numberOfCities = numberOfCities + 1;
+														++numberOfCities;
 														idToSet = numberOfCities;
 														var rand = 0.0;
 														if(idToSet > 3)
@@ -263,7 +271,7 @@
 															rand = Math.random();
 														}
 														console.log("city: "+ obj.city +" "+ numberOfCities);
-														if(rand < 0.4)
+														if(rand < 0.5)
 														{
 															$("#city-name-"+idToSet).html(obj.city);
 															var temperature = result.list[0].main.temp - 272.15;
@@ -277,17 +285,15 @@
 									            {
 									            }
 										});
-										currentCity = currentCity + 1;
-									}
-									if(called == false)
-									{
-										getCityData();
-										called = true;
 									}
 						        }
 						};
 						JsonpHttpRequest(cityUrl + '&callback=cb', "cb");
+						lastCheckedRegion = currentRegion;
+						++currentRegion;
+						setTimeout(getCities, 3500);
 					}
+					getCities();
 		        }
 		};
 		JsonpHttpRequest(regionUrl + '&callback=cb', "cb");
@@ -296,7 +302,25 @@
 
 </script>
 <body class="dark-theme" onload="prepare()">
-<div class="row">
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="homePage.jsp">Početna</a></li>
+                <li><a href="editProfile.jsp">Izmjena profila</a></li>
+                <li><a href="AuthServlet">Odjava</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="row body-jsp">
 	<div class="col-md-3">
 		<div class="col-md-12 text-center">
 	        <img class="rounded-image profile-img" src="<%=userAccount.getImageSource()%>" alt="Profilna slika"/>
@@ -380,7 +404,7 @@
 			</div>
 		</form>
 		
-	<a id="post-rss-toggle" href="javascript:void(0)" class="btn btn-success">Prikazi RSS</a>
+	<a id="post-rss-toggle" href="javascript:void(0)" class="btn btn-success">Prikaži RSS</a>
 		
 	<!--  POSTOVI  -->
 	
