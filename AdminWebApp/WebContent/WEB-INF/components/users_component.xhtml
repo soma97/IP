@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:b="http://bootsfaces.net/ui">
+<h:head></h:head>
+<ui:composition>
+
+<div class="col-md-offset-1 col-md-10">
+<div id="users-div">
+	<div class="col-md-12">
+		<h:outputText id="number-active-id" value="Broj aktivnih korisnika: #{homeBean.activeUsers}"></h:outputText>
+		<hr/>
+		<h:outputText id="number-registered-id" value="Broj registrovanih korisnika: #{homeBean.registeredUsers}"></h:outputText>
+		<hr/>
+		<div class="container" style="width:768px;height:360px;" >
+			<b:canvas style="background-color:white;" id="hoursCanvas" width="768" height="360"></b:canvas>
+		</div>
+	</div>
+	<hr/>
+	<div class="col-md-12">
+		<h3>Korisnici</h3>
+		<h:form styleClass="post-border">
+			<h:dataTable id="users-table" styleClass="table" value="#{homeBean.allUsers}" var="user" style="width: 100%">
+				<h:column>
+					<f:facet name="header">Ime</f:facet>
+					<h:outputText value="#{user.name}"></h:outputText>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Prezime</f:facet>
+					<h:outputText value="#{user.surname}"></h:outputText>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Korisničko ime</f:facet>
+					<h:outputText value="#{user.username}"></h:outputText>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Blokiranje</f:facet>
+					<h:commandButton styleClass="btn btn-danger" disabled="#{user.blocked}" value="Blokiraj" action="#{homeBean.blokiraj}">
+						<f:param value="#{user.id}" name="id"></f:param>
+						<f:ajax execute="@form" render="@form" />
+					</h:commandButton>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Reset lozinke</f:facet>
+					<h:commandButton styleClass="btn btn-danger" value="Resetuj lozinku" action="#{homeBean.resetLozinke}">
+						<f:param value="#{user.id}" name="id"></f:param>
+						<f:ajax execute="@form" render="@form" />
+					</h:commandButton>
+				</h:column>
+			</h:dataTable>
+		</h:form>
+	</div>
+	<div class="col-md-12">
+		<h3>Odobrenje naloga</h3>
+		<h:form styleClass="post-border">
+			<h:dataTable id="approve-table" styleClass="table" value="#{homeBean.usersToApprove}" var="user" style="width: 100%">
+				<h:column>
+					<f:facet name="header">Ime</f:facet>
+					<h:outputText value="#{user.name}"></h:outputText>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Prezime</f:facet>
+					<h:outputText value="#{user.surname}"></h:outputText>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Korisničko ime</f:facet>
+					<h:outputText value="#{user.username}"></h:outputText>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Odobrenje registracije</f:facet>
+					<h:commandButton styleClass="btn btn-success" value="Odobri nalog" actionListener="#{homeBean.odobriNalog()}">
+						<f:param id="approve-id" value="#{user.id}" name="id"></f:param>
+						<f:ajax execute="@form" render="@form" />
+					</h:commandButton>
+				</h:column>
+			</h:dataTable>
+		</h:form>
+	</div>
+</div>
+</div>
+
+</ui:composition>
+</html>

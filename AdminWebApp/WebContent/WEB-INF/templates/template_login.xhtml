@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+	<title>Admin App</title>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+	<h:outputStylesheet library="css" name="global_styles.css" />
+</h:head>
+<body class="dark-theme">
+	<ui:insert name="header"></ui:insert>
+	<h:panelGroup layout="block" styleClass="container body-content">
+	<ui:insert name="body"></ui:insert>
+	</h:panelGroup>
+</body>
+</html>

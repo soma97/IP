@@ -14,8 +14,8 @@ import db.models.Post;
 
 public class PostDAO {
 	private static ConnectionPool connectionPool = ConnectionPool.getConnectionPool();
-	private static final String SQL_SELECT_ALL = "select * from post where is_deleted = false;";
-	private static final String SQL_SELECT_ALL_DANGER = "select * from post where is_emergency_warning=true and is_deleted = false;";
+	private static final String SQL_SELECT_ALL = "select * from post;";
+	private static final String SQL_SELECT_ALL_DANGER = "select * from post where is_emergency_warning=true;";
 	private static final String SQL_SELECT_BY_ID = "select * from post where id=?;";
 	private static final String SQL_INSERT = "insert into post (title,text,link,video_src, location, is_emergency_warning,is_potential_danger, is_deleted,user_account_id) values(?,?,?,?,?,?,?,?,?);";
 	private static final String SQL_DELETE_POST = "update post set is_deleted = true where id = ?;";
@@ -158,7 +158,7 @@ public class PostDAO {
 					SQL_SELECT_ALL_COMMENTS_BY_POST_ID, false, values);
 			rs = pstmt.executeQuery();
 			while (rs.next()){
-				retVal.add(new Comment(rs.getInt("id"), rs.getString("text"), rs.getString("image_src"), rs.getDate("date_time"), 
+				retVal.add(new Comment(rs.getInt("id"), rs.getString("text"), rs.getString("image_src"), rs.getTimestamp("date_time"), 
 						rs.getBoolean("is_deleted"), rs.getInt("user_account_id"), rs.getInt("post_id")));
 			}
 			pstmt.close();

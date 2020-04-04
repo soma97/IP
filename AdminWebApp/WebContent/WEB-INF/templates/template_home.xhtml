@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+	<title>Admin App</title>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+	<h:outputStylesheet library="css" name="global_styles.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+	<h:outputScript library="js" name="chart.js" />
+	<h:outputScript library="js" name="home_page.js" />
+	<h:outputScript library="javax.faces" name="jsf.js" target="head" />
+</h:head>
+<body onload="prepare()" class="dark-theme">
+	<ui:insert name="header"></ui:insert>
+	<h:panelGroup layout="block" styleClass="container body-content">
+	<h2>Početna</h2>
+	<hr/>
+	<div class="row">
+	<div class="col-md-offset-2 col-md-9">
+		<a id="switch-button" href="javascript:void(0)" class="btn btn-success">Prikaži postove</a>
+		<br/>
+		<br/>
+	</div>
+	<ui:insert name="users"></ui:insert>
+	<ui:insert name="posts"></ui:insert>
+	<div class="col-md-offset-2 col-md-9">
+		<br/>
+		<br/>
+	</div>
+	</div>
+	</h:panelGroup>
+</body>
+</html>

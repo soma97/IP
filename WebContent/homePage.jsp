@@ -134,13 +134,13 @@
 			var isHidden = $('#posts').is(":hidden");
 			if(isHidden == true)
 			{
-				$('#rss').fadeOut(750);
-				$('#posts').fadeIn(1500);
+				$('#rss').toggle(750);
+				$('#posts').toggle(1500);
 				$('#post-rss-toggle').html('Prikaži RSS');
 			}
 			else{
-				$('#posts').fadeOut(750);
-				$('#rss').fadeIn(1500);
+				$('#posts').toggle(750);
+				$('#rss').toggle(1500);
 				$('#post-rss-toggle').html('Prikaži postove');
 			}
 		});
