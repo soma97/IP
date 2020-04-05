@@ -3,9 +3,6 @@ package services;
 import java.util.HashMap;
 import java.util.Date;
 import javax.servlet.http.HttpSession;
-
-import org.eclipse.jdt.internal.compiler.env.IModule.IService;
-
 import db.dao.UserAccountDAO;
 import db.models.Login;
 import db.models.UserAccount;

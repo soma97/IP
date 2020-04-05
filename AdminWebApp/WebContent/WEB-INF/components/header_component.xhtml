@@ -7,5 +7,21 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 <ui:composition>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-collapse collapse">
+        <h:form>
+            <ul class="nav navbar-nav">
+            	<li>
+            		<h:commandLink value="Početna" outcome="homePage"/>
+            	</li>
+                <li>
+                	<h:commandLink value="Odjava" action="#{userBean.logout}"/>
+				</li>
+            </ul>
+        </h:form>
+        </div>
+    </div>
+</div>
 </ui:composition>
 </html>

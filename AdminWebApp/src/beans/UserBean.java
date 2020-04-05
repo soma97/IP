@@ -16,12 +16,25 @@ public class UserBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	public boolean isLoggedIn = false;
 	public String username, password;
 	public UserAccount userAccount = new UserAccount();
 	
 	public UserBean()
 	{
 		
+	}
+
+	public boolean isLoggedIn() {
+		return isLoggedIn;
+	}
+
+	public void setLoggedIn(boolean isLoggedIn) {
+		this.isLoggedIn = isLoggedIn;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	public String getUsername() {
@@ -58,6 +71,7 @@ public class UserBean implements Serializable {
 			{
 				FacesContext facesContext = FacesContext.getCurrentInstance();
 				LogingManagement.getInstance().loginUser(userAccount, (HttpSession)facesContext.getExternalContext().getSession(true));
+				isLoggedIn = true;
 				return "homePage.xhtml?faces-redirect=true";
 			}
 			else {
@@ -77,8 +91,13 @@ public class UserBean implements Serializable {
 	
 	public String logout()
 	{
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		LogingManagement.getInstance().logoutUser((HttpSession)facesContext.getExternalContext().getSession(true));
-		return "login.xhtml?faces-redirect=true";
+		if(isLoggedIn)
+		{
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			LogingManagement.getInstance().logoutUser((HttpSession)facesContext.getExternalContext().getSession(true));
+			isLoggedIn = false;
+			return "login.xhtml?faces-redirect=true";
+		}
+		return null;
 	}
 }

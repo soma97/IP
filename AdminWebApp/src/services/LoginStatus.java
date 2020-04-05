@@ -33,6 +33,7 @@ public class LoginStatus {
 
 		for(Login login : back24Hours)
 		{
+			@SuppressWarnings("deprecation")
 			int hour = new Date(login.getDateLogin().getTime()).getHours();
 			activityPerHours.put(hour, activityPerHours.get(hour)+1);
 		}
