@@ -11,7 +11,30 @@
 
 <div class="col-md-offset-1 col-md-10">
 	<div hidden="true" id="posts-div">
-	POSTOVI
+		<div class="col-md-12">
+			<h:form id="emer-post">
+				<h:panelGroup layout="block" styleClass="form-horizontal col-md-12">
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:outputLabel styleClass="control-label col-md-4">Naziv nove kategorije opasnosti</h:outputLabel>
+						<h:panelGroup styleClass="col-md-5">
+							<h:inputText id="cat-name" class="form-control text-box single-line" value="#{homeBean.newEmerCategory}" required="true" requiredMessage="Morate unijeti kategoriju"/>
+							<h:message for="cat-name" style="font-weight:bold;" />
+						</h:panelGroup>
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:panelGroup styleClass="col-md-offset-4 col-md-3">
+							<h:commandButton id="btn" value="Dodaj" action="#{homeBean.dodajKategoriju}" styleClass="btn btn-primary">
+								<f:ajax execute="@form" render="@form" />
+							</h:commandButton>
+						</h:panelGroup>
+					</h:panelGroup>
+				</h:panelGroup>
+			</h:form>
+		</div>
+		<div class="col-md-12">
+			<hr/>
+			<br/>
+		</div>
 	</div>
 </div>
 

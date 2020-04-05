@@ -16,6 +16,9 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">  
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>  
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script> 
 <script>(function(d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
@@ -64,6 +67,12 @@
 
 	function prepare()
 	{
+		$("#notif-dialog").dialog({  
+            autoOpen: false,
+            modal: true,
+            resizable: true
+         }); 
+		
 		setInterval(function refreshContent()
 		{
 			$.ajax({
@@ -71,6 +80,22 @@
 	            url: 'homePage.jsp',
 	            success: function(htmlString) {
 	            	var html = $(htmlString);
+	            	
+	            	<%
+	            	 if(userAccount.getReceiveEmergencyNotifications().equals("app"))
+	            	{
+	            	%>
+	            	
+	            	var newNotifs = $("#emer-notif-bar",html);
+	            	if($(newNotifs).html().length != $("#emer-notif-bar").html().length)
+	            	{
+		            	$("#notif-dialog").html($(newNotifs).html());
+		            	$("#notif-dialog").dialog("open");
+	            	}
+	            	$("#emer-notif-bar").html($(newNotifs).html());
+	            	
+	            	<%}%>
+	            	
 	            	var newPosts = $("div[id^=post-number]",html);
 	            	var oldPosts = $("div[id^=post-number]");
 	            	for(var i=0; i<newPosts.length; ++i)
@@ -334,7 +359,7 @@
 	   			{
 	   		  %>
 	   		 <p><b>Hitna upozorenja</b></p>
-	        <div>
+	        <div id="emer-notif-bar">
 	        <% for(int i=dangerPosts.size()-1, j=0; i>=0 && j<3;--i,++j)
 	           {
 	        %>
@@ -415,6 +440,12 @@
 		for(Post post : posts)
 		{
 			UserAccount postUser = UserAccountDAO.selectUserById(post.getUserAccountId());
+			ArrayList<EmergencyCategory> categories = PostDAO.selectEmergencyCategoriesForPost(post.getId());
+			String categoriesString = "";
+			for(EmergencyCategory cat : categories)
+			{
+				categoriesString += " " + cat.getName();
+			}
 	%>
 	<div id="post-number-<%=post.getId()%>">
 	<div class="col-md-12">
@@ -433,11 +464,11 @@
 				    <% if(post.isPotentialDanger())
 				       {
 				    %>
-				    <a class="text-danger" href="dangerDetails.jsp?id=<%=post.getId()%>"><h2><%= post.getTitle() %></h2></a>
+				    <a class="emergency" href="dangerDetails.jsp?id=<%=post.getId()%>"><h2><%= post.getTitle() %></h2></a>
 				    <%
 				    	if(post.isEmergencyWarning())
 				    	{
-				    		%><p class="text-danger">Hitno upozorenje</p><%
+				    		%><p class="emergency">Hitno upozorenje</p><%
 				    	}
 				      }
 				    else{
@@ -463,6 +494,7 @@
 			<br/>
 			<br/>
 			<div id="hidden<%=post.getId() %>" hidden="true">
+			<p class="emergency"><b><%=categoriesString%></b></p>
 			<p><b><%= post.getText() %></b></p>
 			<%
 				if(post.getLink()!=null)
@@ -569,7 +601,7 @@
 		<form id="commentform<%=post.getId() %>" method="post" action="javascript:ajaxComment(<%=post.getId() %>)" enctype="multipart/form-data">
 			<div class="col-md-12">
 				<br/>
-	        	<input class="form-control" type="text" name="comment" value="Unesite komentar..."/>
+	        	<input class="form-control" type="text" name="comment" placeholder="Unesite komentar..."/>
 	        	<input class="btn btn-info btn-sm" accept="image/*" type="file" name="comment-image"/>
 	        	<input type="hidden" value="<%=session.getAttribute("id") %>" name="user-id" />
 	        	<input type="hidden" value="<%=post.getId() %>" name="post-id" />
@@ -643,5 +675,7 @@
 	</div>
 	
 </div>
+
+<div id="notif-dialog" title="Nova hitna upozorenja"></div>  
 </body>
 </html>

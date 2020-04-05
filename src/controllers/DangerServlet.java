@@ -1,6 +1,8 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,6 +13,8 @@ import db.dao.PostDAO;
 import db.dao.UserAccountDAO;
 import db.models.Post;
 import db.models.UserAccount;
+import services.Constants;
+import services.MailService;
 
 /**
  * Servlet implementation class DangerServlet
@@ -32,7 +36,7 @@ public class DangerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.sendRedirect("homePage.jsp");
 	}
 
 	/**
@@ -52,7 +56,24 @@ public class DangerServlet extends HttpServlet {
 		
 		PostDAO.insertPost(post);
 		
+		String[] categories = request.getParameterValues("categories");
+		
+		if(categories != null && categories.length > 0)
+		{
+			for(String catId : categories)
+			{
+				PostDAO.insertEmergencyCategoryForPost(post.getId(), Integer.parseInt(catId));
+			}
+		}
+		
 		response.sendRedirect("dangerDetails.jsp?id="+post.getId());
+		
+		if(post.isEmergencyWarning())
+		{
+			String content = post.getText() + System.getProperty("line.separator") + "Geolokacija: " + post.getLocation();
+			content += System.getProperty("line.separator") + "Vise informacija na " + Constants.BASE_APP_ADDRESS + "dangerDetails.jsp?id=" + post.getId();
+			MailService.sendEmailToSubscribedUsers("Hitno obavjestenje: " + post.getTitle(), content);
+		}
 	}
 
 }

@@ -26,5 +26,6 @@ public class Constants {
 		
 		//OTHER
 		public static final String BASE_COUNTRY_FLAG_URL="https://restcountries.eu/data";
+		public static final String BASE_APP_ADDRESS = "http://localhost:8080/EmergencyWebApp/";
 		
 }

@@ -5,11 +5,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.context.FacesContext;
 
+import db.dao.EmergencyDAO;
 import db.dao.UserAccountDAO;
+import db.models.EmergencyCategory;
 import db.models.UserAccount;
 
 @ManagedBean(name="homeBean")
@@ -17,6 +21,7 @@ import db.models.UserAccount;
 public class HomePageBean {
 	
 	public int activeUsers, registeredUsers;
+	public String newEmerCategory;
 	public ArrayList<UserAccount> allUsers;
 	public List<UserAccount> usersToApprove;
 	
@@ -58,6 +63,16 @@ public class HomePageBean {
 
 	public void setUsersToApprove(List<UserAccount> usersToApprove) {
 		this.usersToApprove = usersToApprove;
+	}
+	
+	
+
+	public String getNewEmerCategory() {
+		return newEmerCategory;
+	}
+
+	public void setNewEmerCategory(String newEmerCategory) {
+		this.newEmerCategory = newEmerCategory;
 	}
 
 	public String blokiraj()
@@ -109,6 +124,14 @@ public class HomePageBean {
 			user.setApproved(true);
 			UserAccountDAO.updateUser(user);
 		}
+		return null;
+	}
+	
+	public String dodajKategoriju()
+	{
+		EmergencyDAO.insertEmergencyCategory(new EmergencyCategory(0,newEmerCategory,false));
+		FacesContext.getCurrentInstance().addMessage("emer-post:cat-name", new FacesMessage("Uspješno ste dodali: " + newEmerCategory));
+		newEmerCategory = null;
 		return null;
 	}
 

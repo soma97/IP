@@ -20,13 +20,11 @@
 	<ui:insert name="header"></ui:insert>
 	<h:panelGroup layout="block" styleClass="container body-content">
 	<h2>Početna</h2>
+	<div class="col-md-offset-2">
+		<a id="switch-button" href="javascript:void(0)" class="btn btn-success">Prikaži postove</a>
+	</div>
 	<hr/>
 	<div class="row">
-	<div class="col-md-offset-2 col-md-9">
-		<a id="switch-button" href="javascript:void(0)" class="btn btn-success">Prikaži postove</a>
-		<br/>
-		<br/>
-	</div>
 	<ui:insert name="users"></ui:insert>
 	<ui:insert name="posts"></ui:insert>
 	<div class="col-md-offset-2 col-md-9">

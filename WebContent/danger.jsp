@@ -1,3 +1,6 @@
+<%@page import="db.dao.EmergencyDAO"%>
+<%@page import="db.models.*"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -28,6 +31,9 @@ function prepare()
 	});
 }
 </script>
+<%
+	ArrayList<EmergencyCategory> categories = EmergencyDAO.selectEmergencyCategories();
+%>
 <title>Potencijalna opasnost</title>
 </head>
 <body class="dark-theme" onload="prepare()">
@@ -53,37 +59,50 @@ function prepare()
 <h2>Potencijalna opasnost</h2>
 <hr/>
 <div class="row">
-	<div class="col-md-offset-3 col-md-6">
+	<div class="col-md-offset-2 col-md-6">
 		<form id="form-id" method="post" action="DangerServlet">
 			<div class="form-horizontal">
 				<div class="form-group">
-					<label class="control-label col-md-2">Naslov</label>
+					<label class="control-label col-md-4">Naslov</label>
 					<div class="col-md-6">
 						<input class="form-control text-box single-line" type="text" name="title" required="required"/>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label col-md-2">Opis</label>
+					<label class="control-label col-md-4">Kategorije (Ctrl + klik za izbor kategorije)</label>
+					<div class="col-md-6">
+						<select class="form-control" style="color: black;" name="categories" multiple>
+						<%
+							for(EmergencyCategory cat : categories)
+							{
+						%>
+								<option value="<%=cat.getId()%>"><%=cat.getName()%></option>
+						<%  } %>
+						</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label col-md-4">Opis</label>
 					<div class="col-md-6">
 						<textarea class="form-control text-box" name="text" form="form-id"></textarea>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label col-md-3">Hitno upozorenje</label>
+					<label class="control-label col-md-4">Hitno upozorenje</label>
 					<div class="col-md-6">
 						<input class="check-box" type="checkbox" name="emergency"/>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label col-md-2">Lokacija</label>
+					<label class="control-label col-md-4">Lokacija</label>
 					<div class="col-md-6">
 						<input id="location-field" class="form-control text-box single-line" type="text" name="location"/>
 					</div>
 				</div>
-				<div id="map-id" class="map"></div>
+				<div id="map-id" class="map col-md-offset-2"></div>
 				<br/>
 				<div class="form-group">
-					<div class="col-md-offset-3 col-md-1">
+					<div class="col-md-offset-5 col-md-1">
 						<input id="submit-button" type="submit" value="Podijeli" class="btn btn-primary"/>
 					</div>
 				</div>

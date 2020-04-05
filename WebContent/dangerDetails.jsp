@@ -32,6 +32,12 @@
 		return;
 	}
 	UserAccount user = UserAccountDAO.selectUserById(post.getUserAccountId());
+	ArrayList<EmergencyCategory> categories = PostDAO.selectEmergencyCategoriesForPost(post.getId());
+	String categoriesString = "";
+	for(EmergencyCategory cat : categories)
+	{
+		categoriesString += " " + cat.getName();
+	}
 	
 %>
 <script>
@@ -141,6 +147,7 @@
 			<p><b><%= user.getName()+" "+user.getSurname() %></b></p>
 		</div>
 		<div class="col-md-9">
+			<p class="emergency"><b><%=categoriesString%></b></p>
 			<p><b><%= post.getText() %></b></p>
 			<%
 				if(post.getLocation()!=null)
@@ -191,7 +198,7 @@
 		<form id="comment-form" method="post" action="CommentServlet" enctype="multipart/form-data">
 			<div class="col-md-offset-3 col-md-4">
 				<hr/>
-	        	<input id="comment-box" class="form-control" type="text" name="comment" value="Unesite komentar..."/>
+	        	<input id="comment-box" class="form-control" type="text" name="comment" placeholder="Unesite komentar..." />
 	        	<input id="comment-image" class="btn btn-info btn-sm" accept="image/*" type="file" name="comment-image"/>
 	        	<input type="hidden" value="<%=session.getAttribute("id") %>" name="user-id" />
 	        	<input type="hidden" value="<%=post.getId() %>" name="post-id" />
