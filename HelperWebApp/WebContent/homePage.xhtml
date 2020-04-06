@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+<h:head>
+	<title>Poziv za pružanje pomoći</title>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+	<h:outputStylesheet library="css" name="global_styles.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+	<h:outputScript library="js" name="home_page.js" />
+	<h:outputScript library="javax.faces" name="jsf.js" target="head" />
+</h:head>
+<body onload="prepare()" class="dark-theme">
+<h:panelGroup layout="block" styleClass="container body-content">
+<h2>Poziv za pružanje pomoći</h2>
+<hr/>
+<div class="row">
+	<div class="col-md-12">
+			<h:form id="form-id">
+				<h:panelGroup layout="block" styleClass="form-horizontal col-md-12">
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:outputLabel styleClass="control-label col-md-4">Naslov</h:outputLabel>
+						<h:panelGroup styleClass="col-md-5">
+							<h:inputText id="title" class="form-control text-box single-line" value="#{homeBean.title}" required="true" requiredMessage="Morate unijeti naslov"/>
+							<h:message styleClass="text-danger" for="title" style="font-weight:bold;" />
+						</h:panelGroup>
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:outputLabel styleClass="control-label col-md-4">Kategorija</h:outputLabel>
+						<h:panelGroup styleClass="col-md-5">
+						<h:selectOneMenu styleClass="form-control" style="color:black;" value="#{homeBean.callCategoryId}">
+							<c:forEach var="cat" items="#{homeBean.callCategories}">
+							   	<f:selectItem itemValue="#{cat.id}" itemLabel="#{cat.category}" />
+							</c:forEach>
+						</h:selectOneMenu>
+						</h:panelGroup>
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:outputLabel styleClass="control-label col-md-4">Opis</h:outputLabel>
+						<h:panelGroup styleClass="col-md-5">
+							<h:inputText id="descr" class="form-control text-box single-line" value="#{homeBean.description}" required="true" requiredMessage="Morate unijeti opis"/>
+							<h:message styleClass="text-danger" for="descr" style="font-weight:bold;" />
+						</h:panelGroup>
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:outputLabel styleClass="control-label col-md-4">Slika (URL)</h:outputLabel>
+						<h:panelGroup styleClass="col-md-5">
+							<h:inputText id="image" class="form-control text-box single-line" validatorMessage="Neispravan URL" value="#{homeBean.imageSource}">
+							 <f:validateRegex pattern="http[s]*://.+" />
+							</h:inputText>
+							<h:message styleClass="text-danger" for="image" style="font-weight:bold;" />
+						</h:panelGroup>
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:outputLabel styleClass="control-label col-md-4">Lokacija</h:outputLabel>
+						<h:panelGroup styleClass="col-md-5">
+							<h:inputText id="location" name="location-field" class="form-control text-box single-line" value="#{homeBean.location}" required="true" requiredMessage="Morate unijeti lokaciju"/>
+							<h:message styleClass="text-danger" for="location" style="font-weight:bold;" />
+						</h:panelGroup>
+					</h:panelGroup>
+					<div class="map col-md-offset-4" id="map-id">
+					</div>
+					<br/>
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:panelGroup styleClass="col-md-offset-4 col-md-3">
+							<h:outputText id="txt" value="#{param['status']}"></h:outputText>
+						</h:panelGroup>
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="form-group">
+						<h:panelGroup styleClass="col-md-offset-4 col-md-3">
+							<h:commandButton id="btn" value="Podijeli" action="#{homeBean.dodajPoziv}" styleClass="btn btn-primary">
+							</h:commandButton>
+						</h:panelGroup>
+					</h:panelGroup>
+				</h:panelGroup>
+			</h:form>
+	</div>
+</div>
+</h:panelGroup>
+</body>
+</html>

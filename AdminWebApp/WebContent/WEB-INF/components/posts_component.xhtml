@@ -5,7 +5,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:b="http://bootsfaces.net/ui">
+	xmlns:b="http://bootsfaces.net/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <h:head></h:head>
 <ui:composition>
 
@@ -34,6 +35,55 @@
 		<div class="col-md-12">
 			<hr/>
 			<br/>
+			<h:form>
+				<c:forEach var="call" items="#{homeBean.emergencyCalls}">
+					<div class="post-border col-md-12">
+						<h4>Naslov</h4>
+						<h:outputText value="#{call.title}"/>
+						<br/>
+						<br/>
+						<h:commandButton styleClass="btn btn-danger" value="Izbriši poziv" action="#{homeBean.izbrisiPoziv}">
+							<f:param value="#{call.id}" name="id"></f:param>
+							<f:ajax execute="@form" render="@form" />
+						</h:commandButton>
+						<br/>
+						<hr/>
+						<h4>Kategorija</h4>
+						<h:outputText value="#{call.callCategoryString}" />
+						<br/>
+						<hr/>
+						<h4>Opis</h4>
+						<h:outputText value="#{call.description}"/>
+						<br/>
+						<hr/>
+						<h4>Vrijeme</h4>
+						<h:outputText value="#{call.date}"/>
+						<br/>
+						<hr/>
+						<h4>Broj prijava lažnog poziva</h4>
+						<h:outputText value="#{call.numberOfDenouncements}" />
+						<br/>
+						<hr/>
+						<h4>Lokacija</h4>
+						<c:if test="#{call.location != null}">
+							<div class="map" id="map#{call.id}">
+							<script>
+	        					fillMap("#{call.location}","map#{call.id}");
+	        				</script>
+	        				</div>
+						</c:if>
+						<br/>
+						<hr/>
+						<h4>Slika</h4>
+						<h:graphicImage url="#{call.imageSource}" width="400" height="250"/>
+						<br/>
+					</div>
+					<div class="col-md-12">
+						<br/>
+						<br/>
+					</div>
+				</c:forEach>
+			</h:form>
 		</div>
 	</div>
 </div>

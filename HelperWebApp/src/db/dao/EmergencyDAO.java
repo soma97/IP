@@ -81,7 +81,7 @@ public class EmergencyDAO {
 		boolean retVal = false;
 		Connection connection = null;
 		ResultSet generatedKeys = null;
-		Object values[] = { call.getTitle(),call.getDescription(),new Timestamp(call.getDate().getTime()), call.getLocation(), call.getImageSource(),
+		Object values[] = { call.getTitle(),call.getDescription(), new Timestamp(call.getDate().getTime()), call.getLocation(), call.getImageSource(),
 				call.getNumberOfDenouncements(), call.isDeleted(), call.getCallCategoryId() };
 		try {
 			connection = connectionPool.checkOut();

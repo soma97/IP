@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 
 import db.dao.EmergencyDAO;
 import db.dao.UserAccountDAO;
+import db.models.EmergencyCall;
 import db.models.EmergencyCategory;
 import db.models.UserAccount;
 
@@ -24,6 +25,7 @@ public class HomePageBean {
 	public String newEmerCategory;
 	public ArrayList<UserAccount> allUsers;
 	public List<UserAccount> usersToApprove;
+	public ArrayList<EmergencyCall> emergencyCalls;
 	
 	public HomePageBean()
 	{
@@ -31,6 +33,14 @@ public class HomePageBean {
 		activeUsers = (int)allUsers.stream().filter(x -> x.isLoggedIn()).count();
 		registeredUsers = allUsers.size();
 		usersToApprove = allUsers.stream().filter(x -> !x.isApproved() && !x.isBlocked()).collect(Collectors.toList());
+		emergencyCalls = EmergencyDAO.selectAllCalls();
+		
+		for(EmergencyCall call : emergencyCalls)
+		{
+			int id = call.getCallCategoryId();
+			String callCategory = EmergencyDAO.selectCallCategoryById(id).getCategory();
+			call.setCallCategoryString(callCategory);
+		}
 	}
 
 	public int getActiveUsers() {
@@ -73,6 +83,16 @@ public class HomePageBean {
 
 	public void setNewEmerCategory(String newEmerCategory) {
 		this.newEmerCategory = newEmerCategory;
+	}
+	
+	
+
+	public ArrayList<EmergencyCall> getEmergencyCalls() {
+		return emergencyCalls;
+	}
+
+	public void setEmergencyCalls(ArrayList<EmergencyCall> emergencyCalls) {
+		this.emergencyCalls = emergencyCalls;
 	}
 
 	public String blokiraj()
@@ -132,6 +152,20 @@ public class HomePageBean {
 		EmergencyDAO.insertEmergencyCategory(new EmergencyCategory(0,newEmerCategory,false));
 		FacesContext.getCurrentInstance().addMessage("emer-post:cat-name", new FacesMessage("Uspješno ste dodali: " + newEmerCategory));
 		newEmerCategory = null;
+		return null;
+	}
+	
+	public String izbrisiPoziv()
+	{
+		Map<String,String> paramMap=FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		if(paramMap.containsKey("id"))
+		{
+			int id=Integer.parseInt(paramMap.get("id"));
+			EmergencyCall call = EmergencyDAO.selectCallById(id);
+			call.setDeleted(true);
+			EmergencyDAO.updateCall(call);
+			emergencyCalls.removeIf(x -> x.getId() == id);
+		}
 		return null;
 	}
 

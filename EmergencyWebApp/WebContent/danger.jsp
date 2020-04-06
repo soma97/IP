@@ -96,7 +96,7 @@ function prepare()
 				<div class="form-group">
 					<label class="control-label col-md-4">Lokacija</label>
 					<div class="col-md-6">
-						<input id="location-field" class="form-control text-box single-line" type="text" name="location"/>
+						<input id="location-field" readonly="readonly" class="form-control text-box single-line" type="text" name="location"/>
 					</div>
 				</div>
 				<div id="map-id" class="map col-md-offset-2"></div>

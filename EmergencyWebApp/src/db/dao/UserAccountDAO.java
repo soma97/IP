@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
-
 import db.*;
 import db.models.Login;
 import db.models.UserAccount;
@@ -22,7 +20,6 @@ public class UserAccountDAO {
 		private static final String SQL_UPDATE_USER = "update user_account set name = ?,surname=?,username=?,password=?,email=?,country=?,"
 				+ "region=?,city=?,image_src=?,receive_emer_notif=?,number_of_logins=?,is_admin=?, is_approved = ?, is_blocked = ?, is_logged_in = ? where id = ?;";
 		
-		private static final String SQL_SELECT_ALL_LOGIN = "select * from login;";
 		private static final String SQL_SELECT_ALL_LOGIN_BY_ACCOUNT_ID = "select * from login where user_account_id = ?;";
 		private static final String SQL_INSERT_LOGIN = "insert into login (date_login, date_logout, user_account_id) values (?,?,?);";
 		private static final String SQL_UPDATE_LOGIN = "update login set date_logout=? where id=?;";
@@ -159,30 +156,6 @@ public class UserAccountDAO {
 			return retVal;
 		}
 		
-		public static ArrayList<Login> selectAllLogins(){
-			ArrayList<Login> retVal = new ArrayList<Login>();
-			Connection connection = null;
-			ResultSet rs = null;
-			Object values[] = { };
-			try {
-				connection = connectionPool.checkOut();
-				PreparedStatement pstmt = DAOUtil.prepareStatement(connection,
-						SQL_SELECT_ALL_LOGIN, false, values);
-				rs = pstmt.executeQuery();
-				while (rs.next()){
-					Timestamp logoutDate = rs.getTimestamp("date_logout");
-					Date logoutDateJava = logoutDate == null ? null : new Date(logoutDate.getTime());
-					retVal.add(new Login(rs.getInt("id"), new Date(rs.getTimestamp("date_login").getTime()), logoutDateJava, rs.getInt("user_account_id")));
-				}
-				pstmt.close();
-			} catch (SQLException exp) {
-				exp.printStackTrace();
-			} finally {
-				connectionPool.checkIn(connection);
-			}
-			return retVal;
-		}
-		
 		public static ArrayList<Login> selectLoginsForUser(int userId){
 			ArrayList<Login> retVal = new ArrayList<Login>();
 			Connection connection = null;
@@ -194,9 +167,7 @@ public class UserAccountDAO {
 						SQL_SELECT_ALL_LOGIN_BY_ACCOUNT_ID, false, values);
 				rs = pstmt.executeQuery();
 				while (rs.next()){
-					Timestamp logoutDate = rs.getTimestamp("date_logout");
-					Date logoutDateJava = logoutDate == null ? null : new Date(logoutDate.getTime());
-					retVal.add(new Login(rs.getInt("id"), new Date(rs.getTimestamp("date_login").getTime()), logoutDateJava, rs.getInt("user_account_id")));
+					retVal.add(new Login(rs.getInt("id"), rs.getTimestamp("date_login"), rs.getTimestamp("date_logout"), rs.getInt("user_account_id")));
 				}
 				pstmt.close();
 			} catch (SQLException exp) {
@@ -238,7 +209,7 @@ public class UserAccountDAO {
 		public static boolean updateLogoutTime(Login login) {
 			boolean retVal = false;
 			Connection connection = null;
-			Object values[] = { new Timestamp(login.getDateLogin().getTime()), login.getId()};
+			Object values[] = { new Timestamp(login.getDateLogout().getTime()), login.getId()};
 			try {
 				connection = connectionPool.checkOut();
 				PreparedStatement pstmt = DAOUtil.prepareStatement(connection, SQL_UPDATE_LOGIN, false,
