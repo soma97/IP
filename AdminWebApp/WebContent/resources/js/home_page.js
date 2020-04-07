@@ -13,7 +13,7 @@ function prepare()
 		else{
 			$('#posts-div').toggle(750);
 			$('#users-div').toggle(1500);
-			$('#switch-button').html('Prikaži postove');
+			$('#switch-button').html('Prikaži pozive');
 		}
 	});
 	

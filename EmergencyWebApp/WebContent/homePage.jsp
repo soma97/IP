@@ -197,7 +197,7 @@
 			}
 		});
 		
-		//fillWeather();
+		fillWeather();
 		
 	}
 	
